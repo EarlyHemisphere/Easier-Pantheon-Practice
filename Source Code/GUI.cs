@@ -70,6 +70,10 @@ namespace Easier_Pantheon_Practice
             {
                 settings.hitless_practice = !settings.hitless_practice;
             }
+            if (GUILayout.Button($"Reload Boss On Death: {settings.reload_boss_on_death}", Default_Button))
+            {
+                settings.reload_boss_on_death = !settings.reload_boss_on_death;
+            }
             GUI.contentColor = Color.gray;
             GUILayout.Label("KeyBinds",Default_Label);
             GUI.contentColor = Color.white;

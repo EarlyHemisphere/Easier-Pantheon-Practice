@@ -247,6 +247,10 @@ namespace Easier_Pantheon_Practice
 
             if (EasierPantheonPractice.Instance.settings.hitless_practice) damage_to_be_dealt = 1000;
 
+            if (EasierPantheonPractice.Instance.settings.reload_boss_on_death && damage_to_be_dealt >= PlayerData.instance.GetInt("health")) {
+                LoadBossInLoop_static();
+            }
+
             return damage_to_be_dealt;
         }
 
@@ -339,7 +343,50 @@ namespace Easier_Pantheon_Practice
             StartCoroutine(FixSoul());
         }
 
+        public static void LoadBossScene_static()
+        {
+            var HC = HeroController.instance;
+            var GM = GameManager.instance;
+            GameObject Inspect = EasierPantheonPractice.PreloadedObjects["Inspect"];
+            
+            //Copy paste of the FSM that loads a boss from HoG
+            PlayerData.instance.dreamReturnScene = "GG_Workshop";
+            PlayMakerFSM.BroadcastEvent("BOX DOWN DREAM");
+            PlayMakerFSM.BroadcastEvent("CONVO CANCEL");
+            var Transition = Inspect.LocateMyFSM("GG Boss UI").GetAction<CreateObject>("Transition", 0).gameObject;
+
+            foreach (var FSMObject in Transition.Value.GetComponentsInChildren<PlayMakerFSM>())
+            {
+                FSMObject.SendEvent("GG TRANSITION OUT");
+            }
+
+            HC.ClearMPSendEvents();
+            GM.TimePasses();
+            GM.ResetSemiPersistentItems();
+            HC.enterWithoutInput = true;
+            HC.AcceptInput();
+            
+            GM.BeginSceneTransition(new GameManager.SceneLoadInfo
+            {
+                SceneName = SceneToLoad,
+                EntryGateName = "door_dreamEnter",
+                EntryDelay = 0,
+                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
+                PreventCameraFadeOut = true
+            });
+            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul_static());
+        }
+
         private IEnumerator FixSoul()
+        {
+            yield return new WaitForFinishedEnteringScene();
+            yield return null;
+            yield return new WaitForSeconds(1f);//this line differenciates this function from ApplySettings
+            HeroController.instance.AddMPCharge(1);
+            HeroController.instance.AddMPCharge(-1);
+        }
+
+        private static IEnumerator FixSoul_static()
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
@@ -397,6 +444,11 @@ namespace Easier_Pantheon_Practice
             SceneToLoad = GameManager.instance.GetSceneNameString();
             loop = true;
             LoadBossScene();
+        }
+        public static void LoadBossInLoop_static() {
+            SceneToLoad = GameManager.instance.GetSceneNameString();
+            loop = true;
+            LoadBossScene_static();
         }
         private void OnDestroy()
         {

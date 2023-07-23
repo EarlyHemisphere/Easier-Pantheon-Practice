@@ -15,6 +15,6 @@ namespace Easier_Pantheon_Practice
 
         public bool remove_ingame_menu = false;
         public bool funny_descriptions = true;
-
+        public bool reload_boss_on_death = false;
     }
 }
