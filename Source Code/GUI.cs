@@ -12,7 +12,7 @@ namespace Easier_Pantheon_Practice
         public GUIStyle Default_Label, Default_Button;
         private static bool checking_for_bind;
         private static string looking_for_input, current_setting;
-        private const int width = 375, height = 375;
+        private const int width = 375, height = 600;
         
         private void Awake()
         {
@@ -73,6 +73,10 @@ namespace Easier_Pantheon_Practice
             if (GUILayout.Button($"Reload Boss On Death: {settings.reload_boss_on_death}", Default_Button))
             {
                 settings.reload_boss_on_death = !settings.reload_boss_on_death;
+            }
+            if (GUILayout.Button($"Infinite 2.0 Plats Practice: {settings.infinite_anyrad2_plats_practice}", Default_Button))
+            {
+                settings.infinite_anyrad2_plats_practice = !settings.infinite_anyrad2_plats_practice;
             }
             GUI.contentColor = Color.gray;
             GUILayout.Label("KeyBinds",Default_Label);

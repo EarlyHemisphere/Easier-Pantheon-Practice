@@ -10,8 +10,6 @@ using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker.Actions;
 using SFCore.Utils;
 
-
-
 namespace Easier_Pantheon_Practice
 {
     public class FindBoss : MonoBehaviour
@@ -246,12 +244,43 @@ namespace Easier_Pantheon_Practice
             damage_to_be_dealt = BossSceneController.Instance.BossLevel == 1 ? (damage / 2) : damage;
 
             if (EasierPantheonPractice.Instance.settings.hitless_practice) damage_to_be_dealt = 1000;
+            bool isPlayerDead = damage_to_be_dealt >= PlayerData.instance.GetInt("health");
 
-            if (EasierPantheonPractice.Instance.settings.reload_boss_on_death && damage_to_be_dealt >= PlayerData.instance.GetInt("health")) {
+            if (EasierPantheonPractice.Instance.settings.infinite_anyrad2_plats_practice
+                && isPlayerDead
+                && GameManager.instance.sceneName == "GG_Radiance"
+                ) {
+                if (GameObject.Find("Phase2 Detector")) {
+                    ResetPlatsPhase();
+                    return 0;
+                }
+            }
+
+            if (EasierPantheonPractice.Instance.settings.reload_boss_on_death && isPlayerDead) {
                 LoadBossInLoop_static();
             }
 
             return damage_to_be_dealt;
+        }
+
+        private static void ResetPlatsPhase() {
+            GameObject absRad = GameObject.Find("Absolute Radiance");
+            if (absRad) {
+                HeroController HC = HeroController.instance;
+                GameManager GM = GameManager.instance;
+
+                absRad.LocateMyFSM("Control").SendEvent("STUN 1");
+                absRad.GetComponent<HealthManager>().hp = absRad.LocateMyFSM("Phase Control").FsmVariables.GetFsmInt("P4 Stun1").Value;
+                HC.ClearMPSendEvents();
+                GM.TimePasses();
+                GM.ResetSemiPersistentItems();
+                HC.enterWithoutInput = true;
+                HC.AcceptInput();
+                GameObject.Find("Abyss Pit").transform.position = new Vector3(61.77f, 12.1f, 0);
+                GameObject.Find("Knight").transform.position = new Vector3(60.1f, 22.3f, 0);
+                HC.MaxHealth();
+                HC.SetMPCharge(0);
+            }
         }
 
         #endregion
@@ -300,7 +329,10 @@ namespace Easier_Pantheon_Practice
                 {
                     if (HC.acceptingInput)
                     {
-                        if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
+                        if (settings.infinite_anyrad2_plats_practice && GameObject.Find("Phase2 Detector")) {
+                            ResetPlatsPhase();
+                        }
+                        else if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
                         {
                             LoadBossInLoop();
                         }

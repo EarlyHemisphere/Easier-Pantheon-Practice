@@ -16,5 +16,6 @@ namespace Easier_Pantheon_Practice
         public bool remove_ingame_menu = false;
         public bool funny_descriptions = true;
         public bool reload_boss_on_death = false;
+        public bool infinite_anyrad2_plats_practice = false;
     }
 }
