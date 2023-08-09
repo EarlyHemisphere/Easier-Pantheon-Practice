@@ -240,7 +240,7 @@ namespace Easier_Pantheon_Practice
         }
         private static int Only1Damage(int damage)
         {
-            if (!(loop||(DoesDictContain(GameManager.instance.GetSceneNameString()) && PreviousScene == "GG_Workshop"))) return damage;
+            if (!(DoesDictContain(GameManager.instance.GetSceneNameString()) && PreviousScene == "GG_Workshop")) return damage;
             damage_to_be_dealt = BossSceneController.Instance.BossLevel == 1 ? (damage / 2) : damage;
 
             if (EasierPantheonPractice.Instance.settings.hitless_practice) damage_to_be_dealt = 1000;
@@ -251,7 +251,7 @@ namespace Easier_Pantheon_Practice
                 && GameManager.instance.sceneName == "GG_Radiance"
                 ) {
                 if (GameObject.Find("Phase2 Detector")) {
-                    ResetPlatsPhase();
+                    GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(ResetPlatsPhase());
                     return 0;
                 }
             }
@@ -263,23 +263,46 @@ namespace Easier_Pantheon_Practice
             return damage_to_be_dealt;
         }
 
-        private static void ResetPlatsPhase() {
+        private static IEnumerator ResetPlatsPhase() {
             GameObject absRad = GameObject.Find("Absolute Radiance");
             if (absRad) {
                 HeroController HC = HeroController.instance;
                 GameManager GM = GameManager.instance;
+                PlayMakerFSM absRadControlFSM = absRad.LocateMyFSM("Control");
+                GameObject phase2Detector = GameObject.Find("Phase2 Detector");
+                GameObject stunEyeGlow = absRadControlFSM.GetAction<ActivateGameObject>("Stun1 Out", 5).gameObject.GameObject.Value;
 
-                absRad.LocateMyFSM("Control").SendEvent("STUN 1");
-                absRad.GetComponent<HealthManager>().hp = absRad.LocateMyFSM("Phase Control").FsmVariables.GetFsmInt("P4 Stun1").Value;
+                absRadControlFSM.SendEvent("STUN 1");
+                absRad.LocateMyFSM("Attack Choices").SendEvent("ARENA 1 END");
                 HC.ClearMPSendEvents();
                 GM.TimePasses();
                 GM.ResetSemiPersistentItems();
                 HC.enterWithoutInput = true;
                 HC.AcceptInput();
-                GameObject.Find("Abyss Pit").transform.position = new Vector3(61.77f, 12.1f, 0);
+                absRad.transform.position = new Vector3(60.63f, 28.3f, 0.006f);
+                GameObject.Find("Abyss Pit").transform.position = new Vector3(61.77f, 18.7f, 0);
                 GameObject.Find("Knight").transform.position = new Vector3(60.1f, 22.3f, 0);
-                HC.MaxHealth();
+                HC.SetHazardRespawn(new Vector3(60.1f, 22.3f, 0), true);
+                HC.MaxHealth(); // also resets baldur shell
                 HC.SetMPCharge(0);
+                GameObject.Find("CamLock A2").SetActive(false);
+                absRadControlFSM.GetAction<ActivateGameObject>("Arena 2 Start", 2).gameObject.GameObject.Value.SetActive(true);
+                absRad.LocateMyFSM("Teleport").SetState("Idle");
+                phase2Detector.LocateMyFSM("Detect").SetState("State 1");
+                phase2Detector.SetActive(false);
+                GameObject.Find("Tendril1").LocateMyFSM("Audio").SetState("State 1");
+                GameObject.Find("Tendril4").LocateMyFSM("Audio").SetState("State 1");
+                GameObject.Find("Tendril5").LocateMyFSM("Audio").SetState("State 1");
+                stunEyeGlow.SetActive(true);
+                stunEyeGlow.LocateMyFSM("FSM").SetState("Init");
+                GameObject.Find("Halo").LocateMyFSM("Fader").SendEvent("UP");
+
+                yield return new WaitForSeconds(5);
+
+                absRad.GetComponent<HealthManager>().hp = absRad.LocateMyFSM("Phase Control").FsmVariables.GetFsmInt("P4 Stun1").Value;
+
+                // remove climb and final platforms
+                // remove ascend beam glow
             }
         }
 
@@ -330,7 +353,7 @@ namespace Easier_Pantheon_Practice
                     if (HC.acceptingInput)
                     {
                         if (settings.infinite_anyrad2_plats_practice && GameObject.Find("Phase2 Detector")) {
-                            ResetPlatsPhase();
+                            StartCoroutine(ResetPlatsPhase());
                         }
                         else if (loop || (DoesDictContain(theCurrentScene) && PreviousScene == "GG_Workshop"))
                         {
