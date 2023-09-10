@@ -111,6 +111,26 @@ namespace Easier_Pantheon_Practice
                                 RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.hitless_practice ? 1 : 0),
                                 CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                 Style = HorizontalOptionStyle.VanillaStyle
+                            }).AddHorizontalOption(
+                            "ReloadBossOnDeath",
+                            new HorizontalOptionConfig
+                            {
+                                Label = "Reload Boss On Death",
+                                Options = boolvalues,
+                                ApplySetting = (_, i) => { settings.reload_boss_on_death = i != 0; },
+                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.reload_boss_on_death ? 1 : 0),
+                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                Style = HorizontalOptionStyle.VanillaStyle
+                            }).AddHorizontalOption(
+                            "Soul",
+                            new HorizontalOptionConfig
+                            {
+                                Label = "Infinite Radiance Plats Practice",
+                                Options = boolvalues,
+                                ApplySetting = (_, i) => { settings.infinite_anyrad2_plats_practice = i != 0; },
+                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.infinite_anyrad2_plats_practice ? 1 : 0),
+                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
+                                Style = HorizontalOptionStyle.VanillaStyle
                             },
                             out var MainOptions);
                         c.AddKeybind(

@@ -127,6 +127,14 @@ namespace Easier_Pantheon_Practice
             {
                 settings.hitless_practice = true;
             }
+            if (GUILayout.Button("+", Default_Button))
+            {
+                settings.reload_boss_on_death = !settings.reload_boss_on_death;
+            }
+            if (GUILayout.Button("+", Default_Button))
+            {
+                settings.infinite_anyrad2_plats_practice = !settings.infinite_anyrad2_plats_practice;
+            }
             GUILayout.EndArea();
             
             
