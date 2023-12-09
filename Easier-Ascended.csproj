@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <OutputPath>./bin/test</OutputPath>
+    <LanguageVersion>7.1</LanguageVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,45 +27,49 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\</OutputPath>
+    <OutputPath>bin/Release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LanguageVersion>7.1</LanguageVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="PlayMaker">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\PlayMaker.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\PlayMaker.dll</HintPath>
     </Reference>
     <Reference Include="SFCore, Version=1.4.3.4, Culture=neutral, PublicKeyToken=723094b6adc0e8b9">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\SFCore.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\SFCore.dll</HintPath>
     </Reference>
     <Reference Include="DebugMod">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\DebugMod.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\DebugMod.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -76,9 +81,4 @@
     <Compile Include="Source Code\Settings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="@echo on" />
-    <Exec Command="echo Copying mod" />
-    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;C:\/home/lucas/.steam/debian-installation/steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\&quot;" />
-  </Target>
 </Project>

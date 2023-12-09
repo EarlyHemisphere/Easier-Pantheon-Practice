@@ -10,7 +10,7 @@ namespace Easier_Pantheon_Practice
         internal static EasierPantheonPractice Instance;
 
         public EasierPantheonPractice() : base("Easier Pantheon Practice") { }
-        public override string GetVersion() => "1.0.6 - v1";
+        public override string GetVersion() => "1.0.7";
 
         public GlobalModSettings settings = new GlobalModSettings();
         public override ModSettings GlobalSettings
@@ -40,12 +40,6 @@ namespace Easier_Pantheon_Practice
 
         private string BossDesc(string key, string sheet)
         {
-            switch (key)
-            {
-                case "CHALLENGE_UI_LEVEL2": return "P5 PRACTICE";
-                case "CHALLENGE_UI_LEVEL1": return "P1-4 PRACTICE";
-            }
-
             #region for the trolls
             if (settings.funny_descriptions)
             {
@@ -66,7 +60,6 @@ namespace Easier_Pantheon_Practice
                     case "KNIGHT_STATUE_1":        
                     case "KNIGHT_STATUE_2":        
                     case "KNIGHT_STATUE_3":        return "Did you really just spend all these hours grinding just to get this??";
-                    case "GG_S_RADIANCE":          return "I'm the god of light and you insult me by referring to me as a tiny moth??";
                     case "GG_S_SLY":               return "Bug Yoda";
                     case "GG_S_GHOST_HU":          return "I love PANCAKES";
                     case "GG_S_GHOST_GORB":        return "Ascend with Gorb";

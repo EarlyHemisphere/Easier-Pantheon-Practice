@@ -92,7 +92,6 @@ namespace Easier_Pantheon_Practice
             }
 
             ChangeFSM();
-            BossSceneController.Instance.BossLevel = 0;
         }
 
 
