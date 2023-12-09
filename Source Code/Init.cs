@@ -11,7 +11,6 @@ namespace Easier_Pantheon_Practice
     {
         public EasierPantheonPractice() : base("Easier Pantheon Practice") {}
         public override string GetVersion() => "v1.0.7";
-
         public bool ToggleButtonInsideMenu => true;
 
         private bool isEnabled;
@@ -310,87 +309,35 @@ namespace Easier_Pantheon_Practice
 
         private string BossDesc(string key, string sheettitle, string orig)
         {
-            switch (key)
-            {
-                case "CHALLENGE_UI_LEVEL2":
-                    return "P5 PRACTICE";
-                case "CHALLENGE_UI_LEVEL1":
-                    return "P1-4 PRACTICE";
-            }
-
             #region for the trolls
 
             if (settings.funny_descriptions)
             {
                 switch (key)
                 {
-                    case "NAME_MEGA_MOSS_CHARGER":
-                        return "UNKILLABLE MOSS CHARGER";
-                        
-                    case "GG_S_MEGAMOSS":
-                        return "The True Champion of the Gods. Try as hard as you want, you can not kill it";
-                        
-                    case "MEGA_MOSS_SUPER":
-                        return "UNKILLABLE";
-                        
-                    case "MEGA_MOSS_SUB":
-                        return "THE TRUE CHAMPION OF THE GODS";
-                        
-                    case "GG_S_GRUZ":
-                        return "My head hurts. Please dont make me slam my head again";
-                        
-                    case "GG_S_BIGBUZZ":
-                        return "Vicious God of running away";
-                        
-                    case "GG_S_FLUKEMUM":
-                        return "Alluring God of standing still";
-                        
-                    case "GG_S_BIGBEES":
-                        return "Gods of RNG";
-                        
-                    case "GG_S_NOSK_HORNET":
-                        return "Vicious God of running away, but worse";
-                        
-                    case "GG_S_COLLECTOR":
-                        return "The boss that gives nightmares to All Binding players";
-                        
-                    case "GG_S_MIGHTYZOTE":
-                        return "I like giving ear aches";
-                        
-                    case "KNIGHT_STATUE_1":
-                    case "KNIGHT_STATUE_2":
-                    case "KNIGHT_STATUE_3":
-                        return "Did you really just spend all these hours grinding just to get this??";
-                        
-                    case "GG_S_RADIANCE":
-                        return "I'm the god of light and you insult me by referring to me as a tiny moth??";
-                        
-                    case "GG_S_SLY":
-                        return "Bug Yoda";
-                        
-                    case "GG_S_GHOST_HU":
-                        return "I love PANCAKES";
-                        
-                    case "GG_S_GHOST_GORB":
-                        return "Ascend with Gorb";
-                        
-                    case "GG_S_SOULMASTER":
-                        return "Teleporting freak";
-                        
-                    case "GG_S_SOUL_TYRANT":
-                        return "Teleporting freak v2";
-                        
-                    case "GG_S_MAGEKNIGHT":
-                        return "Am i really a boss?";
-                        
-                    case "CHARM_NAME_2":
-                        return "OP Compass";
-                        
-                    case "CHARM_DESC_2":
-                        return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
-                        
-                    default:
-                        return orig;
+                    case "NAME_MEGA_MOSS_CHARGER": return "UNKILLABLE MOSS CHARGER";
+                    case "GG_S_MEGAMOSS":          return "The True Champion of the Gods. Try as hard as you want, you can not kill it";
+                    case "MEGA_MOSS_SUPER":        return "UNKILLABLE";
+                    case "MEGA_MOSS_SUB":          return "THE TRUE CHAMPION OF THE GODS";
+
+                    case "GG_S_GRUZ":              return "My head hurts. Please dont make me slam my head again";
+                    case "GG_S_BIGBUZZ":           return "Vicious God of running away";
+                    case "GG_S_FLUKEMUM":          return "Alluring God of standing still";
+                    case "GG_S_BIGBEES":           return "Gods of RNG";
+                    case "GG_S_NOSK_HORNET":       return "Vicious God of running away, but worse";
+                    case "GG_S_COLLECTOR":         return "The boss that gives nightmares to All Binding players";
+                    case "GG_S_MIGHTYZOTE":        return "I like giving ear aches";
+                    case "KNIGHT_STATUE_1":        
+                    case "KNIGHT_STATUE_2":        
+                    case "KNIGHT_STATUE_3":        return "Did you really just spend all these hours grinding just to get this??";
+                    case "GG_S_SLY":               return "Bug Yoda";
+                    case "GG_S_GHOST_HU":          return "I love PANCAKES";
+                    case "GG_S_GHOST_GORB":        return "Ascend with Gorb";
+                    case "GG_S_SOULMASTER":        return "Teleporting freak";
+                    case "GG_S_SOUL_TYRANT":       return "Teleporting freak v2";
+                    case "GG_S_MAGEKNIGHT":        return "Am i really a boss?";
+                    case "CHARM_NAME_2":           return "OP Compass";
+                    case "CHARM_DESC_2":           return "Its the most OP charm in the game.<br><br>Wear this charm to get good";
                 }
             }
 

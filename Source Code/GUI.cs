@@ -39,7 +39,6 @@ namespace Easier_Pantheon_Practice
             
             //only want it to show in pause menu, in HoG and not when looking for input
             if (!gm.isPaused) return;
-            if (gm.GetSceneNameString() != "GG_Workshop") return;
             if (checking_for_bind) return;
 
             Default_Label = new GUIStyle(GUI.skin.label)
