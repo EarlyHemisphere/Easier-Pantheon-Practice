@@ -465,7 +465,7 @@ namespace Easier_Pantheon_Practice
                 Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
                 PreventCameraFadeOut = true
             });
-            StartCoroutine(FixSoul());
+            StartCoroutine(FixSoul(BossSceneController.Instance.BossLevel));
         }
 
         public static void LoadBossScene_static()
@@ -499,25 +499,27 @@ namespace Easier_Pantheon_Practice
                 Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
                 PreventCameraFadeOut = true
             });
-            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul_static());
+            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul_static(BossSceneController.Instance.BossLevel));
         }
 
-        private IEnumerator FixSoul()
+        private IEnumerator FixSoul(int bossLevel)
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
             yield return new WaitForSeconds(1f);//this line differenciates this function from ApplySettings
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
+            BossSceneController.Instance.BossLevel = bossLevel;
         }
 
-        private static IEnumerator FixSoul_static()
+        private static IEnumerator FixSoul_static(int bossLevel)
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
             yield return new WaitForSeconds(1f);//this line differenciates this function from ApplySettings
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
+            BossSceneController.Instance.BossLevel = bossLevel;
         }
 
         private IEnumerator LoadWorkshop()
