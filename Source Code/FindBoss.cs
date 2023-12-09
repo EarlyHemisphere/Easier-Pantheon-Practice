@@ -9,8 +9,8 @@ using System.Linq;
 using HutongGames.PlayMaker;
 using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker.Actions;
-using SFCore.Utils;
 using System.Reflection;
+using ModCommon.Util;
 
 namespace Easier_Pantheon_Practice
 {
@@ -131,7 +131,7 @@ namespace Easier_Pantheon_Practice
             SOB = true;
             CurrentBoss = CurrentBoss_1 = ""; 
 
-            ReflectionHelper.GetField(typeof(BossSequenceController), "bossIndex", false).SetValue(null, 1);
+            Modding.ReflectionHelper.GetField(typeof(BossSequenceController), "bossIndex", false).SetValue(null, 1);
             
             if (DoesDictContain(arg0.name))
             {
