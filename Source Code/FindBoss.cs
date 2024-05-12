@@ -11,8 +11,6 @@ using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker.Actions;
 using System.Reflection;
 using ModCommon.Util;
-using AnyRadiance;
-using System.CodeDom;
 
 namespace Easier_Pantheon_Practice
 {
@@ -26,7 +24,6 @@ namespace Easier_Pantheon_Practice
         private string MapZone;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
-        private static int prevAbsRadHp = 0;
         public static int swordBurstRepeats = 5;
 
         private readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
@@ -126,7 +123,6 @@ namespace Easier_Pantheon_Practice
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             StartCoroutine(SceneLoaded());
-            StartCoroutine(DisplayRadiancePrevHp());
             if (!loop)
             {
                 if (PreviousScene != "GG_Workshop") return;
@@ -482,11 +478,6 @@ namespace Easier_Pantheon_Practice
             HC.enterWithoutInput = true;
             HC.AcceptInput();
             
-            GameObject absRad = GameObject.Find("Absolute Radiance");
-            if (absRad != null) {
-                prevAbsRadHp = absRad.GetComponent<HealthManager>().hp;
-            }
-            
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
                 SceneName = SceneToLoad,
@@ -563,23 +554,6 @@ namespace Easier_Pantheon_Practice
             USceneManager.sceneLoaded -= SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn -= DoDreamReturn;
             ModHooks.Instance.HeroUpdateHook -= HotKeys;
-        }
-
-        public static IEnumerator DisplayRadiancePrevHp() {
-            GameObject prevHp = new GameObject("previous radiance hp");
-            prevHp.tag = "Boss";
-            prevHp.AddComponent<HealthManager>();
-            prevHp.transform.parent = null;
-            prevHp.layer = 17;
-            Modding.Logger.Log("HERE");
-            Modding.Logger.Log(prevAbsRadHp);
-            UnityEngine.SceneManagement.SceneManager.GetSceneByName("GG_Radiance").GetRootGameObjects().ToList<GameObject>().ForEach(go => Modding.Logger.Log(go.name));
-            prevHp.GetComponent<HealthManager>().hp = prevAbsRadHp;
-            DontDestroyOnLoad(prevHp);
-
-            yield return new WaitForSeconds(5);
-
-            GameObject.DestroyImmediate(prevHp);
         }
             
         #region Misc Functions
