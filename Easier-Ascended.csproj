@@ -46,15 +46,12 @@
     <Reference Include="DebugMod">
       <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\DebugMod.dll</HintPath>
     </Reference>
-<<<<<<< HEAD
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed/MMHOOK_Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_PlayMaker">
       <HintPath>D:\SteamLibrary\steamapps\common\Hollow Knight\hollow_knight_Data\Managed/MMHOOK_PlayMaker.dll</HintPath>
     </Reference>
-=======
->>>>>>> b55d1a2 (remove hp indicator code)
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />

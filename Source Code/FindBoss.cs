@@ -11,11 +11,7 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using SFCore.Utils;
 using System.Reflection;
-<<<<<<< HEAD
 using System.Linq;
-=======
-using ModCommon.Util;
->>>>>>> b55d1a2 (remove hp indicator code)
 
 namespace Easier_Pantheon_Practice
 {
@@ -493,10 +489,6 @@ namespace Easier_Pantheon_Practice
             GM.ResetSemiPersistentItems();
             HC.enterWithoutInput = true;
             HC.AcceptInput();
-<<<<<<< HEAD
-=======
-            
->>>>>>> b55d1a2 (remove hp indicator code)
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
                 SceneName = SceneToLoad,
