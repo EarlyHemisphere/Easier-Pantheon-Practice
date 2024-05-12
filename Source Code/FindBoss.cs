@@ -11,7 +11,11 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using SFCore.Utils;
 using System.Reflection;
+<<<<<<< HEAD
 using System.Linq;
+=======
+using ModCommon.Util;
+>>>>>>> b55d1a2 (remove hp indicator code)
 
 namespace Easier_Pantheon_Practice
 {
@@ -24,7 +28,6 @@ namespace Easier_Pantheon_Practice
         private static string PreviousScene, SceneToLoad;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
-        private static int prevAbsRadHp = 0;
         public static int swordBurstRepeats = 5;
 
         private static readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
@@ -125,7 +128,6 @@ namespace Easier_Pantheon_Practice
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             StartCoroutine(SceneLoaded());
-            StartCoroutine(DisplayRadiancePrevHp());
             if (!loop)
             {
                 if (PreviousScene != "GG_Workshop") return;
@@ -491,6 +493,10 @@ namespace Easier_Pantheon_Practice
             GM.ResetSemiPersistentItems();
             HC.enterWithoutInput = true;
             HC.AcceptInput();
+<<<<<<< HEAD
+=======
+            
+>>>>>>> b55d1a2 (remove hp indicator code)
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
                 SceneName = SceneToLoad,
@@ -536,7 +542,18 @@ namespace Easier_Pantheon_Practice
             loop = true;
             LoadBossScene();
         }
+<<<<<<< HEAD
 
+=======
+        private void OnDestroy()
+        {
+            ModHooks.Instance.BeforeSceneLoadHook -= BeforeSceneChange;
+            USceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+            On.BossSceneController.DoDreamReturn -= DoDreamReturn;
+            ModHooks.Instance.HeroUpdateHook -= HotKeys;
+        }
+            
+>>>>>>> b55d1a2 (remove hp indicator code)
         #region Misc Functions
 
 
