@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using ModCommon.Util;
+using HutongGames.PlayMaker;
+using HutongGames.PlayMaker.Actions;
 
 namespace Easier_Pantheon_Practice
 {
@@ -7,6 +10,7 @@ namespace Easier_Pantheon_Practice
     {
         private HealthManager health;
         private PlayMakerFSM _control;
+        private PlayMakerFSM _attackCommands;
 
 
         Dictionary<string, int> Health_CurrentBoss = new Dictionary<string, int>() //dict for boss healths
@@ -126,6 +130,9 @@ namespace Easier_Pantheon_Practice
                 case "False Knight New":
                     FalseKnight();
                     break;
+                case "Absolute Radiance":
+                    AbsoluteRadiance();
+                    break;
             }
         }
 
@@ -183,6 +190,41 @@ namespace Easier_Pantheon_Practice
             //WHY DOES FK AND FC HAVE THEIR RECOVER HEALTH IN DIFFERENT FSMs
             _control.Fsm.GetFsmInt("Recover HP").Value = 260;
         }
+
+        private void AbsoluteRadiance() {
+            _attackCommands = gameObject.LocateMyFSM("Attack Commands");
+            if (_attackCommands.GetState("CW Double").Actions.Length == 2) {
+                _attackCommands.InsertAction("CW Double", new CallMethod {
+                    behaviour = this,
+                    methodName = "SwordBurstRepeatCheck",
+                    parameters = new FsmVar[0],
+                    everyFrame = false
+                }, 0);
+            }
+            if (_attackCommands.GetState("CCW Double").Actions.Length == 2) {
+                _attackCommands.InsertAction("CCW Double", new CallMethod {
+                    behaviour = this,
+                    methodName = "SwordBurstRepeatCheck",
+                    parameters = new FsmVar[0],
+                    everyFrame = false
+                }, 0);
+            }
+        }
         #endregion
+
+        // Any Radiance 2.0 manually adds more sword burst waves
+        // https://github.com/EarlyHemisphere/HollowKnight.AnyRadiance2-1.5/blob/main/Radiance.cs#L460
+        // This function is strategically inserted right at the start of the repeat check state to
+        // override the 2.0 mod counter with our own counter that takes into account the possibility
+        // of resetting plats phase in the middle of a sword burst attack (BossNerf L372)
+        public void SwordBurstRepeatCheck() {
+            _attackCommands = gameObject.LocateMyFSM("Attack Commands");
+            if (FindBoss.swordBurstRepeats == 0) {
+                FindBoss.swordBurstRepeats = 4;
+            } else {
+                _attackCommands.FsmVariables.GetFsmBool("Repeated").Value = false;
+                FindBoss.swordBurstRepeats -= 1;
+            }
+        }
     }
 }

@@ -11,6 +11,8 @@ using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker.Actions;
 using System.Reflection;
 using ModCommon.Util;
+using AnyRadiance;
+using System.CodeDom;
 
 namespace Easier_Pantheon_Practice
 {
@@ -24,6 +26,8 @@ namespace Easier_Pantheon_Practice
         private string MapZone;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
+        private static int prevAbsRadHp = 0;
+        public static int swordBurstRepeats = 5;
 
         private readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
@@ -122,6 +126,7 @@ namespace Easier_Pantheon_Practice
         private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
             StartCoroutine(SceneLoaded());
+            StartCoroutine(DisplayRadiancePrevHp());
             if (!loop)
             {
                 if (PreviousScene != "GG_Workshop") return;
@@ -258,7 +263,7 @@ namespace Easier_Pantheon_Practice
             }
 
             if (EasierPantheonPractice.Instance.settings.reload_boss_on_death && isPlayerDead) {
-                LoadBossInLoop_static();
+                LoadBossInLoop();
             }
 
             return damage;
@@ -284,6 +289,7 @@ namespace Easier_Pantheon_Practice
 
                 absRadAttackCommandsFSM.SetState("EB Glow End");
                 absRadAttackCommandsFSM.FsmVariables.GetFsmBool("Final Orbs").Value = false;
+                absRadAttackCommandsFSM.FsmVariables.GetFsmInt("Spawns").Value = absRadAttackCommandsFSM.GetAction<SetIntValue>("Nail Fan", 4).intValue.Value;
                 absRadAttackCommandsFSM.FsmVariables.GetFsmGameObject("Shot Charge").Value.GetComponent<ParticleSystem>().enableEmission = false;
                 absRadAttackCommandsFSM.FsmVariables.GetFsmGameObject("Shot Charge 2").Value.GetComponent<ParticleSystem>().enableEmission = false;
                 if (absRadAttackCommandsFSM.GetState("AB Start").Actions.Length == 2) {
@@ -311,8 +317,6 @@ namespace Easier_Pantheon_Practice
 
                 GM.TimePasses();
                 GM.ResetSemiPersistentItems();
-                
-                absRad.transform.position = new Vector3(60.63f, 28.3f, 0.006f);
 
                 phase2Detector.LocateMyFSM("Detect").SetState("State 1");
                 phase2Detector.SetActive(false);
@@ -347,32 +351,53 @@ namespace Easier_Pantheon_Practice
                     }
                 });
                 GameObject.Find("Radiant Plat Small (10)").LocateMyFSM("radiant_plat").SendEvent("APPEAR");
-                GameObject.Find("Ascend Respawns")?.SetActive(false);
                 GameObject.Find("CamLocks Ascend")?.SetActive(false);
                 GameObject.Find("CamLock Final")?.SetActive(false);
                 GameObject.Find("Shot Charge").GetComponent("ParticleSystem");
                 
-                foreach (GameObject trigger in FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Hazard Respawn Trigger v2") && go.transform.position.y >= 158.8f)) {
-                    trigger.GetType().GetField("inactive", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(trigger, false);
-                    trigger.SetActive(false);
+                foreach (GameObject trigger in FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Hazard Respawn Trigger v2") && go.transform.position.y >= 50f)) {
+                    HazardRespawnTrigger hazardRespawnTrigger = trigger.GetComponent<HazardRespawnTrigger>();
+                    hazardRespawnTrigger.GetType().GetField("inactive", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(hazardRespawnTrigger, false);
                 }
+                GameObject.Find("Ascend Respawns")?.SetActive(false);
                 foreach (GameObject spike in FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Radiant Spike(Clone)") && go.transform.position.y >= 50f)) {
-                    Modding.Logger.Log(spike.LocateMyFSM("Control").ActiveStateName);
                     spike.LocateMyFSM("Control").SendEvent("DOWN");
                 }
 
                 yield return new WaitUntil(() => absRad.LocateMyFSM("Teleport").ActiveStateName == "Idle");
 
+                absRad.transform.position = new Vector3(60.63f, 28.3f, 0.006f);
                 absRadControlFSM.SendEvent("STUN 1");
+                absRad.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 
-                yield return new WaitForSeconds(5);
+                swordBurstRepeats = 4;
+                
+                yield return new WaitForSeconds(2);
+
+                GameObject.Find("P2 SetA")?.transform.GetComponentsInChildren<Transform>().ToList().ForEach(t => {
+                    if (t.gameObject != null && t.gameObject.name.Contains("Radiant Plat") && t.gameObject.LocateMyFSM("radiant_plat") != null) {
+                        t.gameObject.GetComponent<SpriteFlash>().CancelFlash();
+                    }
+                });
+                GameObject.Find("Hazard Plat")?.transform.GetComponentsInChildren<Transform>().ToList().ForEach(t => {
+                    if (t.gameObject != null && t.gameObject.name.Contains("Radiant Plat") && t.gameObject.LocateMyFSM("radiant_plat") != null) {
+                        t.gameObject.GetComponent<SpriteFlash>().CancelFlash();
+                    }
+                });
+                GameObject.Find("Ascend Set")?.transform.GetComponentsInChildren<Transform>().ToList().ForEach(t => {
+                    if (t.gameObject != null && t.gameObject.name.Contains("Radiant Plat") && t.gameObject.LocateMyFSM("radiant_plat") != null) {
+                        t.gameObject.GetComponent<SpriteFlash>().CancelFlash();
+                    }
+                });
+
+                yield return new WaitForSeconds(3);
 
                 absRad.GetComponent<HealthManager>().hp = absRad.LocateMyFSM("Phase Control").FsmVariables.GetFsmInt("P4 Stun1").Value;
                 absRad.LocateMyFSM("Phase Control").SetState("Check 4");
                 
-                // velocity reset
-                // sword burst happening only twice
                 // z index issue
+                // add way to see her health after death - not going to complete
+                // sword wall spam problem - untested
             }
         }
 
@@ -433,8 +458,8 @@ namespace Easier_Pantheon_Practice
                 }
             }
         }
-        
-        public void LoadBossScene()
+
+        public static void LoadBossScene()
         {
             var HC = HeroController.instance;
             var GM = GameManager.instance;
@@ -457,39 +482,10 @@ namespace Easier_Pantheon_Practice
             HC.enterWithoutInput = true;
             HC.AcceptInput();
             
-            GM.BeginSceneTransition(new GameManager.SceneLoadInfo
-            {
-                SceneName = SceneToLoad,
-                EntryGateName = "door_dreamEnter",
-                EntryDelay = 0,
-                Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
-                PreventCameraFadeOut = true
-            });
-            StartCoroutine(FixSoul(BossSceneController.Instance.BossLevel));
-        }
-
-        public static void LoadBossScene_static()
-        {
-            var HC = HeroController.instance;
-            var GM = GameManager.instance;
-            GameObject Inspect = EasierPantheonPractice.PreloadedObjects["Inspect"];
-            
-            //Copy paste of the FSM that loads a boss from HoG
-            PlayerData.instance.dreamReturnScene = "GG_Workshop";
-            PlayMakerFSM.BroadcastEvent("BOX DOWN DREAM");
-            PlayMakerFSM.BroadcastEvent("CONVO CANCEL");
-            var Transition = Inspect.LocateMyFSM("GG Boss UI").GetAction<CreateObject>("Transition", 0).gameObject;
-
-            foreach (var FSMObject in Transition.Value.GetComponentsInChildren<PlayMakerFSM>())
-            {
-                FSMObject.SendEvent("GG TRANSITION OUT");
+            GameObject absRad = GameObject.Find("Absolute Radiance");
+            if (absRad != null) {
+                prevAbsRadHp = absRad.GetComponent<HealthManager>().hp;
             }
-
-            HC.ClearMPSendEvents();
-            GM.TimePasses();
-            GM.ResetSemiPersistentItems();
-            HC.enterWithoutInput = true;
-            HC.AcceptInput();
             
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
@@ -499,20 +495,10 @@ namespace Easier_Pantheon_Practice
                 Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
                 PreventCameraFadeOut = true
             });
-            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul_static(BossSceneController.Instance.BossLevel));
+            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul(BossSceneController.Instance.BossLevel));
         }
 
-        private IEnumerator FixSoul(int bossLevel)
-        {
-            yield return new WaitForFinishedEnteringScene();
-            yield return null;
-            yield return new WaitForSeconds(1f);//this line differenciates this function from ApplySettings
-            HeroController.instance.AddMPCharge(1);
-            HeroController.instance.AddMPCharge(-1);
-            BossSceneController.Instance.BossLevel = bossLevel;
-        }
-
-        private static IEnumerator FixSoul_static(int bossLevel)
+        private static IEnumerator FixSoul(int bossLevel)
         {
             yield return new WaitForFinishedEnteringScene();
             yield return null;
@@ -566,16 +552,10 @@ namespace Easier_Pantheon_Practice
         
         #endregion
 
-        public void LoadBossInLoop()
-        {
+        public static void LoadBossInLoop() {
             SceneToLoad = GameManager.instance.GetSceneNameString();
             loop = true;
             LoadBossScene();
-        }
-        public static void LoadBossInLoop_static() {
-            SceneToLoad = GameManager.instance.GetSceneNameString();
-            loop = true;
-            LoadBossScene_static();
         }
         private void OnDestroy()
         {
@@ -583,6 +563,23 @@ namespace Easier_Pantheon_Practice
             USceneManager.sceneLoaded -= SceneManager_sceneLoaded;
             On.BossSceneController.DoDreamReturn -= DoDreamReturn;
             ModHooks.Instance.HeroUpdateHook -= HotKeys;
+        }
+
+        public static IEnumerator DisplayRadiancePrevHp() {
+            GameObject prevHp = new GameObject("previous radiance hp");
+            prevHp.tag = "Boss";
+            prevHp.AddComponent<HealthManager>();
+            prevHp.transform.parent = null;
+            prevHp.layer = 17;
+            Modding.Logger.Log("HERE");
+            Modding.Logger.Log(prevAbsRadHp);
+            UnityEngine.SceneManagement.SceneManager.GetSceneByName("GG_Radiance").GetRootGameObjects().ToList<GameObject>().ForEach(go => Modding.Logger.Log(go.name));
+            prevHp.GetComponent<HealthManager>().hp = prevAbsRadHp;
+            DontDestroyOnLoad(prevHp);
+
+            yield return new WaitForSeconds(5);
+
+            GameObject.DestroyImmediate(prevHp);
         }
             
         #region Misc Functions
