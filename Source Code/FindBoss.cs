@@ -534,18 +534,6 @@ namespace Easier_Pantheon_Practice
             loop = true;
             LoadBossScene();
         }
-<<<<<<< HEAD
-
-=======
-        private void OnDestroy()
-        {
-            ModHooks.Instance.BeforeSceneLoadHook -= BeforeSceneChange;
-            USceneManager.sceneLoaded -= SceneManager_sceneLoaded;
-            On.BossSceneController.DoDreamReturn -= DoDreamReturn;
-            ModHooks.Instance.HeroUpdateHook -= HotKeys;
-        }
-            
->>>>>>> b55d1a2 (remove hp indicator code)
         #region Misc Functions
 
 
