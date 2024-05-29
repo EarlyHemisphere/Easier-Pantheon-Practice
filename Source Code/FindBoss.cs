@@ -546,6 +546,7 @@ namespace Easier_Pantheon_Practice
         public static void LoadBossInLoop() {
             SceneToLoad = GameManager.instance.GetSceneNameString();
             loop = true;
+            swordBurstRepeats = 4;
             LoadBossScene();
         }
         private void OnDestroy()
