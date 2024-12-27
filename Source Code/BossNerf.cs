@@ -215,7 +215,7 @@ namespace Easier_Pantheon_Practice
         // https://github.com/EarlyHemisphere/HollowKnight.AnyRadiance2-1.5/blob/main/Radiance.cs#L460
         // This function is strategically inserted right at the start of the repeat check state to
         // override the 2.0 mod counter with our own counter that takes into account the possibility
-        // of resetting plats phase in the middle of a sword burst attack (BossNerf L372)
+        // of resetting plats phase in the middle of a sword burst attack
         public void SwordBurstRepeatCheck() {
             _attackCommands = gameObject.LocateMyFSM("Attack Commands");
             if (FindBoss.swordBurstRepeats == 0) {

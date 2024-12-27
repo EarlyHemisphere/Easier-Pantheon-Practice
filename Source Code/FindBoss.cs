@@ -24,7 +24,7 @@ namespace Easier_Pantheon_Practice
         private static string PreviousScene, SceneToLoad;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
-        public static int swordBurstRepeats = 5;
+        public static int swordBurstRepeats = 4;
 
         private static readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
