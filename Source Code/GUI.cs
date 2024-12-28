@@ -132,7 +132,7 @@ namespace Easier_Pantheon_Practice
             }
             if (GUILayout.Button("+", Default_Button))
             {
-                settings.infinite_anyrad2_plats_practice = !settings.infinite_anyrad2_plats_practice;
+                settings.infinite_anyrad_plats_practice = !settings.infinite_anyrad_plats_practice;
             }
             GUILayout.EndArea();
             

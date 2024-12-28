@@ -121,13 +121,13 @@ namespace Easier_Pantheon_Practice
                                 CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                 Style = HorizontalOptionStyle.VanillaStyle
                             }).AddHorizontalOption(
-                            "Soul",
+                            "InfiniteAnyRadPlatsPractice",
                             new HorizontalOptionConfig
                             {
-                                Label = "Infinite Radiance Plats Practice",
+                                Label = "Infinite AnyRad Plats Practice",
                                 Options = boolvalues,
-                                ApplySetting = (_, i) => { settings.infinite_anyrad2_plats_practice = i != 0; },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.infinite_anyrad2_plats_practice ? 1 : 0),
+                                ApplySetting = (_, i) => { settings.infinite_anyrad_plats_practice = i != 0; },
+                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.infinite_anyrad_plats_practice ? 1 : 0),
                                 CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
                                 Style = HorizontalOptionStyle.VanillaStyle
                             },

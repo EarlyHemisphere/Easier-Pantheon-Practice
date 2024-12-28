@@ -11,7 +11,7 @@ namespace Easier_Pantheon_Practice
         public int soul = 0;
         public bool hitless_practice = false;
         public bool reload_boss_on_death = false;
-        public bool infinite_anyrad2_plats_practice = false;
+        public bool infinite_anyrad_plats_practice = false;
 
         [JsonConverter(typeof(PlayerActionSetConverter))]
         public KeyBinds keybinds = new KeyBinds();
