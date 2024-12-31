@@ -11,6 +11,7 @@ using UObject = UnityEngine.Object;
 using HutongGames.PlayMaker.Actions;
 using System.Reflection;
 using ModCommon.Util;
+using static UnityEngine.ParticleSystem;
 
 namespace Easier_Pantheon_Practice
 {
@@ -24,7 +25,7 @@ namespace Easier_Pantheon_Practice
         private string MapZone;
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
-        public static int swordBurstRepeats = 5;
+        public static int swordBurstRepeats = 4;
 
         private readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
@@ -273,6 +274,7 @@ namespace Easier_Pantheon_Practice
                 PlayMakerFSM absRadControlFSM = absRad.LocateMyFSM("Control");
                 PlayMakerFSM absRadAttackCommandsFSM = absRad.LocateMyFSM("Attack Commands");
                 PlayMakerFSM absRadAttackChoicesFSM = absRad.LocateMyFSM("Attack Choices");
+                PlayMakerFSM absRadPhaseControlFSM = absRad.LocateMyFSM("Phase Control");
                 GameObject phase2Detector = GameObject.Find("Phase2 Detector");
                 GameObject stunEyeGlow = absRadControlFSM.GetAction<ActivateGameObject>("Stun1 Out", 5).gameObject.GameObject.Value;
 
@@ -286,8 +288,10 @@ namespace Easier_Pantheon_Practice
                 absRadAttackCommandsFSM.SetState("EB Glow End");
                 absRadAttackCommandsFSM.FsmVariables.GetFsmBool("Final Orbs").Value = false;
                 absRadAttackCommandsFSM.FsmVariables.GetFsmInt("Spawns").Value = absRadAttackCommandsFSM.GetAction<SetIntValue>("Nail Fan", 4).intValue.Value;
-                absRadAttackCommandsFSM.FsmVariables.GetFsmGameObject("Shot Charge").Value.GetComponent<ParticleSystem>().enableEmission = false;
-                absRadAttackCommandsFSM.FsmVariables.GetFsmGameObject("Shot Charge 2").Value.GetComponent<ParticleSystem>().enableEmission = false;
+                EmissionModule shotChargeEmission = absRadAttackCommandsFSM.FsmVariables.GetFsmGameObject("Shot Charge").Value.GetComponent<ParticleSystem>().emission;
+                EmissionModule shotCharge2Emission = absRadAttackCommandsFSM.FsmVariables.GetFsmGameObject("Shot Charge 2").Value.GetComponent<ParticleSystem>().emission;
+                shotChargeEmission.enabled = false;
+                shotCharge2Emission.enabled = false;
                 if (absRadAttackCommandsFSM.GetState("AB Start").Actions.Length == 2) {
                     FsmOwnerDefault ownerDefault = new FsmOwnerDefault();
                     ownerDefault.OwnerOption = OwnerDefaultOption.SpecifyGameObject;
@@ -314,20 +318,20 @@ namespace Easier_Pantheon_Practice
                 GM.TimePasses();
                 GM.ResetSemiPersistentItems();
 
-                phase2Detector.LocateMyFSM("Detect").SetState("State 1");
-                phase2Detector.SetActive(false);
+                phase2Detector?.LocateMyFSM("Detect").SetState("State 1");
+                phase2Detector?.SetActive(false);
 
-                stunEyeGlow.SetActive(true);
-                stunEyeGlow.LocateMyFSM("FSM").SetState("Init");
+                stunEyeGlow?.SetActive(true);
+                stunEyeGlow?.LocateMyFSM("FSM").SetState("Init");
 
                 iTween.Stop(GameObject.Find("Abyss Pit"));
                 GameObject.Find("Abyss Pit").transform.position = new Vector3(61.77f, 18.7f, 0);
                 GameObject.Find("Knight").transform.position = new Vector3(60.1f, 22.3f, 0);
                 GameObject.Find("Blocker Shield")?.LocateMyFSM("Control").SendEvent("HERO REVIVED");
                 GameObject.Find("CamLock A2")?.SetActive(false);
-                GameObject.Find("Tendril1").LocateMyFSM("Audio").SetState("State 1");
-                GameObject.Find("Tendril4").LocateMyFSM("Audio").SetState("State 1");
-                GameObject.Find("Tendril5").LocateMyFSM("Audio").SetState("State 1");
+                GameObject.Find("Tendril1")?.LocateMyFSM("Audio").SetState("State 1");
+                GameObject.Find("Tendril4")?.LocateMyFSM("Audio").SetState("State 1");
+                GameObject.Find("Tendril5")?.LocateMyFSM("Audio").SetState("State 1");
                 GameObject.Find("P2 SetA")?.transform.GetComponentsInChildren<Transform>().ToList().ForEach(t => {
                     if (t.gameObject != null && t.gameObject.name.Contains("Radiant Plat") && t.gameObject.LocateMyFSM("radiant_plat") != null) {
                         t.gameObject.LocateMyFSM("radiant_plat").SendEvent("DISAPPEAR");
@@ -346,7 +350,6 @@ namespace Easier_Pantheon_Practice
                         t.gameObject.GetComponent<SpriteFlash>().CancelFlash();
                     }
                 });
-                GameObject.Find("Radiant Plat Small (10)").LocateMyFSM("radiant_plat").SendEvent("APPEAR");
                 GameObject.Find("CamLocks Ascend")?.SetActive(false);
                 GameObject.Find("CamLock Final")?.SetActive(false);
                 GameObject.Find("Shot Charge").GetComponent("ParticleSystem");
@@ -356,19 +359,18 @@ namespace Easier_Pantheon_Practice
                     hazardRespawnTrigger.GetType().GetField("inactive", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(hazardRespawnTrigger, false);
                 }
                 GameObject.Find("Ascend Respawns")?.SetActive(false);
-                foreach (GameObject spike in FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Radiant Spike(Clone)") && go.transform.position.y >= 50f)) {
-                    spike.LocateMyFSM("Control").SendEvent("DOWN");
-                }
 
                 yield return new WaitUntil(() => absRad.LocateMyFSM("Teleport").ActiveStateName == "Idle");
 
                 absRad.transform.position = new Vector3(60.63f, 28.3f, 0.006f);
                 absRadControlFSM.SendEvent("STUN 1");
                 absRad.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                absRad.GetComponent<Rigidbody2D>().angularVelocity = 0;
+                GameObject.Find("Legs")?.SetActive(false);
 
                 swordBurstRepeats = 4;
                 
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(5);
 
                 GameObject.Find("P2 SetA")?.transform.GetComponentsInChildren<Transform>().ToList().ForEach(t => {
                     if (t.gameObject != null && t.gameObject.name.Contains("Radiant Plat") && t.gameObject.LocateMyFSM("radiant_plat") != null) {
@@ -385,15 +387,13 @@ namespace Easier_Pantheon_Practice
                         t.gameObject.GetComponent<SpriteFlash>().CancelFlash();
                     }
                 });
-
-                yield return new WaitForSeconds(3);
+                foreach (GameObject spike in FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Radiant Spike(Clone)") && go.transform.position.y >= 50f)) {
+                    spike.LocateMyFSM("Control").SendEvent("DOWN");
+                }
+                GameObject.Find("Radiant Plat Small (10)").LocateMyFSM("radiant_plat").SendEvent("APPEAR");
 
                 absRad.GetComponent<HealthManager>().hp = absRad.LocateMyFSM("Phase Control").FsmVariables.GetFsmInt("P4 Stun1").Value;
                 absRad.LocateMyFSM("Phase Control").SetState("Check 4");
-                
-                // z index issue
-                // add way to see her health after death - not going to complete
-                // sword wall spam problem - untested
             }
         }
 
