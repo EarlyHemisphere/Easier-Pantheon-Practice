@@ -212,15 +212,16 @@ namespace Easier_Pantheon_Practice
         }
         #endregion
 
-        // Any Radiance 2.0 manually adds more sword burst waves
+        // Any Radiance mods manually add more sword burst waves
         // https://github.com/EarlyHemisphere/HollowKnight.AnyRadiance2-1.5/blob/main/Radiance.cs#L460
         // This function is strategically inserted right at the start of the repeat check state to
-        // override the 2.0 mod counter with our own counter that takes into account the possibility
+        // override the any radiance internal counter with our own counter that takes into account the possibility
         // of resetting plats phase in the middle of a sword burst attack (BossNerf L372)
         public void SwordBurstRepeatCheck() {
             _attackCommands = gameObject.LocateMyFSM("Attack Commands");
             if (FindBoss.swordBurstRepeats == 0) {
-                FindBoss.swordBurstRepeats = 4;
+                _attackCommands.FsmVariables.GetFsmBool("Repeated").Value = true;
+                FindBoss.swordBurstRepeats =  4;
             } else {
                 _attackCommands.FsmVariables.GetFsmBool("Repeated").Value = false;
                 FindBoss.swordBurstRepeats -= 1;
