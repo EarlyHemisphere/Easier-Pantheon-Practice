@@ -477,6 +477,10 @@ namespace Easier_Pantheon_Practice
             GM.ResetSemiPersistentItems();
             HC.enterWithoutInput = true;
             HC.AcceptInput();
+
+            if (ModHooks.Instance.LoadedMods.Contains("CarefreeRngReset")) {
+                Modding.ReflectionHelper.SetAttr(HC, "hitsSinceShielded", 7);
+            }
             
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
