@@ -505,6 +505,10 @@ namespace Easier_Pantheon_Practice
             PlayMakerFSM.BroadcastEvent("BOX DOWN DREAM");
             PlayMakerFSM.BroadcastEvent("CONVO CANCEL");
 
+            if (ModHooks.GetMod("CarefreeRngReset") != null) {
+                ReflectionHelper.SetField(HC, "hitsSinceShielded", 7);
+            }
+
             HC.ClearMPSendEvents();
             GM.TimePasses();
             GM.ResetSemiPersistentItems();
