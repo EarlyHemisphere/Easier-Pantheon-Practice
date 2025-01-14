@@ -557,7 +557,6 @@ namespace Easier_Pantheon_Practice
         private static void LoadBossInLoop()
         {
             loop = true;
-            swordBurstRepeats = 4;
             LoadBossScene();
         }
         #region Misc Functions

@@ -192,6 +192,7 @@ namespace Easier_Pantheon_Practice
 
         private void AbsoluteRadiance() {
             _attackCommands = gameObject.LocateMyFSM("Attack Commands");
+            _control = gameObject.LocateMyFSM("Control");
             if (_attackCommands.GetState("CW Double").Actions.Length == 2) {
                 _attackCommands.InsertAction("CW Double", new CallMethod {
                     behaviour = this,
@@ -207,6 +208,14 @@ namespace Easier_Pantheon_Practice
                     parameters = new FsmVar[0],
                     everyFrame = false
                 }, 0);
+            }
+            if (_control.GetState("Arena 1 Start").Actions.Length == 1) {
+                _control.AddAction("Arena 1 Start", new CallMethod {
+                    behaviour = this,
+                    methodName = "ResetSwordBurstRepeats",
+                    parameters = new FsmVar[0],
+                    everyFrame = false
+                });
             }
         }
         #endregion
@@ -230,6 +239,14 @@ namespace Easier_Pantheon_Practice
                 _attackCommands.FsmVariables.GetFsmBool("Repeated").Value = false;
                 FindBoss.swordBurstRepeats -= 1;
             }
+        }
+
+        public void ResetSwordBurstRepeats() {
+            _attackCommands = gameObject.LocateMyFSM("Attack Commands");
+            bool isAnyRad = _attackCommands.GetAction<RandomInt>("Orb Antic", 2).min.Value == 10;
+            bool isAnyRad2 = _attackCommands.GetAction<RandomInt>("Orb Antic", 2).min.Value == 8;
+
+            FindBoss.swordBurstRepeats = isAnyRad ? 2 : isAnyRad2 ? 4 : 1;
         }
     }
 }
