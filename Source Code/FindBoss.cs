@@ -180,10 +180,9 @@ namespace Easier_Pantheon_Practice
         private IEnumerator ChangeBoss(string BossName, bool wait = true)
         {
             //Thank you to redfrog for this non-cursed code (before it was a while loop which didnt make sense)
+            yield return new WaitForSeconds(1.5f);
             if (wait) yield return new WaitUntil(() => GameObject.Find(BossName));
             GameObject.Find(BossName).AddComponent<BossNerf>();
-
-
         }
 
         private void p5Boss()
@@ -559,7 +558,6 @@ namespace Easier_Pantheon_Practice
             loop = true;
 
             FindObjectsOfType<GameObject>(true).Where(go => go.name.Contains("Radiant Nail(Clone)")).ToList().ForEach(sword => {
-                Modding.Logger.Log(sword.name);
                 sword.GetComponent<PolygonCollider2D>().enabled = false;
                 sword.GetComponent<MeshRenderer>().enabled = false;
                 sword.GetComponent<Rigidbody2D>().isKinematic = false;
