@@ -375,10 +375,10 @@ namespace Easier_Pantheon_Practice
                 GameObject.Find("CamLocks Ascend")?.SetActive(false);
                 GameObject.Find("CamLock Final")?.SetActive(false);
                 
-                foreach (GameObject trigger in FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Hazard Respawn Trigger v2") && go.transform.position.y >= 50f)) {
+                FindObjectsOfType<GameObject>().Where(go => go.name.Contains("Hazard Respawn Trigger v2") && go.transform.position.y >= 50f).ToList().ForEach(trigger => {
                     HazardRespawnTrigger hazardRespawnTrigger = trigger.GetComponent<HazardRespawnTrigger>();
                     hazardRespawnTrigger.GetType().GetField("inactive", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(hazardRespawnTrigger, false);
-                }
+                });
                 GameObject.Find("Ascend Respawns")?.SetActive(false);
                 yield return new WaitUntil(() => absRad.LocateMyFSM("Teleport").ActiveStateName == "Idle");
 
@@ -557,6 +557,15 @@ namespace Easier_Pantheon_Practice
         private static void LoadBossInLoop()
         {
             loop = true;
+
+            FindObjectsOfType<GameObject>(true).Where(go => go.name.Contains("Radiant Nail(Clone)")).ToList().ForEach(sword => {
+                Modding.Logger.Log(sword.name);
+                sword.GetComponent<PolygonCollider2D>().enabled = false;
+                sword.GetComponent<MeshRenderer>().enabled = false;
+                sword.GetComponent<Rigidbody2D>().isKinematic = false;
+                sword.Recycle();
+            });
+
             LoadBossScene();
         }
         #region Misc Functions
