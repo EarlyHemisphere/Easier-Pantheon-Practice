@@ -238,11 +238,7 @@ namespace Easier_Pantheon_Practice
         }
 
         public void ResetSwordBurstRepeats() {
-            _attackCommands = gameObject.LocateMyFSM("Attack Commands");
-            bool isAnyRad = _attackCommands.GetAction<RandomInt>("Orb Antic", 2).min.Value == 10;
-            bool isAnyRad2 = _attackCommands.GetAction<RandomInt>("Orb Antic", 2).min.Value == 8;
-
-            FindBoss.swordBurstRepeats = isAnyRad ? 2 : isAnyRad2 ? 4 : 1;
+            FindBoss.swordBurstRepeats = 4;
         }
     }
 }
