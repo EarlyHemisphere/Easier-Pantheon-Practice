@@ -183,12 +183,6 @@ namespace Easier_Pantheon_Practice
             yield return new WaitForSeconds(1.5f);
             if (wait) yield return new WaitUntil(() => GameObject.Find(BossName));
             GameObject.Find(BossName).AddComponent<BossNerf>();
-            FindObjectsOfType<GameObject>(true).Where(go => go.name.Contains("Radiant Nail(Clone)")).ToList().ForEach(sword => {
-                sword.GetComponent<PolygonCollider2D>().enabled = false;
-                sword.GetComponent<MeshRenderer>().enabled = false;
-                sword.GetComponent<Rigidbody2D>().isKinematic = false;
-                sword.Recycle();
-            });
         }
 
         private void p5Boss()
