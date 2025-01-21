@@ -183,6 +183,12 @@ namespace Easier_Pantheon_Practice
             yield return new WaitForSeconds(1.5f);
             if (wait) yield return new WaitUntil(() => GameObject.Find(BossName));
             GameObject.Find(BossName).AddComponent<BossNerf>();
+            FindObjectsOfType<GameObject>(true).Where(go => go.name.Contains("Radiant Nail(Clone)")).ToList().ForEach(sword => {
+                sword.GetComponent<PolygonCollider2D>().enabled = false;
+                sword.GetComponent<MeshRenderer>().enabled = false;
+                sword.GetComponent<Rigidbody2D>().isKinematic = false;
+                sword.Recycle();
+            });
         }
 
         private void p5Boss()
@@ -305,6 +311,9 @@ namespace Easier_Pantheon_Practice
                     absRadAttackCommandsFSM.GetAction<Wait>("Orb Summon", 2).time = 0.1f;
 		            absRadAttackCommandsFSM.GetAction<Wait>("Orb Pause", 0).time = 0.1f;
                 }
+                if (isAnyRad2) {
+                    absRadAttackCommandsFSM.GetAction<Wait>("FinalOrb Pause", 0).time.Value = 0.95f;
+                }
 
                 absRadAttackCommandsFSM.SetState("EB Glow End");
                 absRadAttackCommandsFSM.FsmVariables.GetFsmBool("Final Orbs").Value = false;
@@ -414,12 +423,13 @@ namespace Easier_Pantheon_Practice
                 absRad.GetComponent<HealthManager>().hp = absRadPhaseControlFSM.FsmVariables.GetFsmInt("P4 Stun1").Value;
                 absRadPhaseControlFSM.SetState("Check 4");              
 
-                if (isAnyRad) {
+                if (isAnyRad || isAnyRad2) {
                     AnyRadFinalPhaseHelper finalPhaseHelper = absRad.GetComponent<AnyRadFinalPhaseHelper>();
                     if (finalPhaseHelper != null) {
                         finalPhaseHelper.onePlatSet = false;
                     } else {
-                        absRad.AddComponent<AnyRadFinalPhaseHelper>();
+                        AnyRadFinalPhaseHelper helper = absRad.AddComponent<AnyRadFinalPhaseHelper>();
+                        helper.isAnyRad2 = isAnyRad2;
                     }
                 }  
             }

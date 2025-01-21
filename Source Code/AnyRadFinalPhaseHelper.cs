@@ -9,6 +9,7 @@ namespace Easier_Pantheon_Practice {
         private PlayMakerFSM _attackCommands;
         private PlayMakerFSM _attackChoices;
         public bool onePlatSet = false;
+        public bool isAnyRad2 = false;
 
         private void Awake() {
             _hm = base.gameObject.GetComponent<HealthManager>();
@@ -18,8 +19,13 @@ namespace Easier_Pantheon_Practice {
         }
 
         public void Update() {
-            if (_hm.hp < _phaseControl.FsmVariables.GetFsmInt("P5 Acend").Value - 500) {
-                if (!onePlatSet) {
+            if (_hm.hp < _phaseControl.FsmVariables.GetFsmInt("P5 Acend").Value) {
+                if (isAnyRad2 && !onePlatSet) {
+                    onePlatSet = true;
+                    _attackCommands.GetAction<Wait>("FinalOrb Pause", 0).time.Value = 0.25f;
+                }
+            } else if (_hm.hp < _phaseControl.FsmVariables.GetFsmInt("P5 Acend").Value - 500) {
+                if (!onePlatSet && !isAnyRad2) {
                     onePlatSet = true;
                     _attackCommands.GetAction<Wait>("Orb Antic", 0).time = 0.01f;
                     _attackCommands.GetAction<SetIntValue>("Orb Antic", 1).intValue = 5;
