@@ -561,13 +561,6 @@ namespace Easier_Pantheon_Practice
         {
             loop = true;
 
-            FindObjectsOfType<GameObject>(true).Where(go => go.name.Contains("Radiant Nail(Clone)")).ToList().ForEach(sword => {
-                sword.GetComponent<PolygonCollider2D>().enabled = false;
-                sword.GetComponent<MeshRenderer>().enabled = false;
-                sword.GetComponent<Rigidbody2D>().isKinematic = false;
-                sword.Recycle();
-            });
-
             LoadBossScene();
         }
         #region Misc Functions

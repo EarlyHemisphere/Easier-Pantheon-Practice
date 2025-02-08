@@ -307,6 +307,8 @@ namespace Easier_Pantheon_Practice
             ModHooks.LanguageGetHook += BossDesc;
         }
 
+        public override int LoadPriority() => 2;
+
         private string BossDesc(string key, string sheettitle, string orig)
         {
             #region for the trolls

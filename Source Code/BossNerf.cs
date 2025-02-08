@@ -218,6 +218,12 @@ namespace Easier_Pantheon_Practice
                     everyFrame = false
                 });
             }
+             _control.AddAction("Init", new CallMethod {
+                behaviour = this,
+                methodName = "ResetSwords",
+                parameters = new FsmVar[0],
+                everyFrame = false
+            });
         }
         #endregion
 
@@ -248,6 +254,15 @@ namespace Easier_Pantheon_Practice
             bool isAnyRad2 = _attackCommands.GetAction<RandomInt>("Orb Antic", 2).min.Value == 8;
 
             FindBoss.swordBurstRepeats = isAnyRad ? 2 : isAnyRad2 ? 4 : 1;
+        }
+
+        public void ResetSwords() {
+            FindObjectsOfType<GameObject>(true).Where(go => go.name.Contains("Radiant Nail(Clone)")).ToList().ForEach(sword => {
+                sword.GetComponent<PolygonCollider2D>().enabled = false;
+                sword.GetComponent<MeshRenderer>().enabled = false;
+                sword.GetComponent<Rigidbody2D>().isKinematic = false;
+                sword.Recycle();
+            });
         }
     }
 }
