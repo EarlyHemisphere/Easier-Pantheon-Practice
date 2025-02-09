@@ -27,6 +27,7 @@ namespace Easier_Pantheon_Practice
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
         public static int? swordBurstRepeats = null;
+        private static bool postResetInvuln = false;
 
         private static readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
@@ -252,6 +253,7 @@ namespace Easier_Pantheon_Practice
 
         private static int Only1Damage(int hazardType, int damage)
         {
+            if (postResetInvuln) return 0;
             if (!DoesDictContain(GameManager.instance.GetSceneNameString())) return damage;
 
             if (EasierPantheonPractice.settings.hitless_practice) damage = 1000;
@@ -338,6 +340,7 @@ namespace Easier_Pantheon_Practice
                 HC.SetHazardRespawn(new Vector3(60.1f, 22.3f, 0), true);
                 HC.MaxHealth();
                 HC.SetMPCharge(0);
+                GM.StartCoroutine(PostResetInvulnerability());
 
                 GM.TimePasses();
                 GM.ResetSemiPersistentItems();
@@ -427,6 +430,12 @@ namespace Easier_Pantheon_Practice
                     }
                 }  
             }
+        }
+
+        public static IEnumerator PostResetInvulnerability() {
+            postResetInvuln = true;
+            yield return new WaitForSeconds(8);
+            postResetInvuln = false;
         }
 
         #endregion
