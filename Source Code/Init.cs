@@ -2,8 +2,7 @@
 using Modding;
 using UnityEngine;
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
-using Modding.Menu;
-using Modding.Menu.Config;
+using Satchel.BetterMenus;
 
 namespace Easier_Pantheon_Practice
 {
@@ -14,10 +13,8 @@ namespace Easier_Pantheon_Practice
         public bool ToggleButtonInsideMenu => true;
 
         private bool isEnabled;
-        private bool isCurrentlyEnabled;
-
-        private static MenuScreen ExtraSettings;
-        public static MenuScreen MainMenu;
+        private Menu ExtraSettings;
+        public static Menu menuRef = null;
 
         public MenuScreen GetMenuScreen(MenuScreen modListMenu, ModToggleDelegates? toggleDelegates)
         {
@@ -36,253 +33,111 @@ namespace Easier_Pantheon_Practice
             
             string[] boolvalues = {"False", "True"};
 
-            MainMenu = new MenuBuilder(UIManager.instance.UICanvas.gameObject, "EPPMenu")
-                .CreateTitle("Easier Pantheon Practice Settings", MenuTitleStyle.vanillaStyle)
-                .CreateContentPane(RectTransformData.FromSizeAndPos(
-                    new RelVector2(new Vector2(1920f, 903f)),
-                    new AnchoredPosition(
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0f, -60f)
+            ExtraSettings ??= new Menu(
+                "Additional Settings",
+                new Element[]{
+                    new HorizontalOption(
+                        name: "Funny Descriptions",
+                        description: "",
+                        values: new[]{"False", "True"},
+                        applySetting: val => settings.funny_descriptions = val == 1,
+                        loadSetting: () => settings.funny_descriptions ? 1 : 0
+                    ),
+                    new HorizontalOption(
+                        name: "Only Apply Settings",
+                        description: "",
+                        values: new[]{"False", "True"},
+                        applySetting: val => settings.only_apply_settings = val == 1,
+                        loadSetting: () => settings.funny_descriptions ? 1 : 0
+                    ),
+                    new HorizontalOption(
+                        name: "Can Reloads Boss in Loads",
+                        description: "",
+                        values: new[]{"False", "True"},
+                        applySetting: val => settings.allow_reloads_in_loads = val == 1,
+                        loadSetting: () => settings.allow_reloads_in_loads ? 1 : 0
+                    ),
+                    new KeyBind(
+                        name: "Move Around HoG",
+                        playerAction: settings.keybinds.Key_teleport_around_HoG
                     )
-                ))
-                .CreateControlPane(RectTransformData.FromSizeAndPos(
-                    new RelVector2(new Vector2(1920f, 259f)),
-                    new AnchoredPosition(
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0f, -502f)
-                    )
-                ))
-                .SetDefaultNavGraph(new ChainedNavGraph())
-                .AddContent(
-                    RegularGridLayout.CreateVerticalLayout(105f),
-                    c =>
-                    {
-                        c.AddHorizontalOption(
-                            "Toggle Mod",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Toggle Mod",
-                                Options = new []{"On","Off"},
-                                ApplySetting = (_, i) => { isEnabled = i == 0;},
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.remove_health),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            })
-                            .AddHorizontalOption(
-                            "RemoveHealth",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Remove Health",
-                                Options = maskvalues,
-                                ApplySetting = (_, i) => { settings.remove_health = i; },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.remove_health),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "Lifeblood",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Lifeblood",
-                                Options = maskvalues,
-                                ApplySetting = (_, i) => { settings.lifeblood = i; },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.lifeblood),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "Soul",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Soul",
-                                Options = soulvalues,
-                                ApplySetting = (_, i) => { settings.soul = Int32.Parse(soulvalues[i]); },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.soul),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "HitlessPractice",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Hitless Practice",
-                                Options = boolvalues,
-                                ApplySetting = (_, i) => { settings.hitless_practice = i != 0; },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.hitless_practice ? 1 : 0),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "ReloadBossOnDeath",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Reload Boss On Death",
-                                Options = boolvalues,
-                                ApplySetting = (_, i) => { settings.reload_boss_on_death = i != 0; },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.reload_boss_on_death ? 1 : 0),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "InfiniteAnyRadPlatsPractice",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Infinite AnyRad Plats Practice",
-                                Options = boolvalues,
-                                ApplySetting = (_, i) => { settings.infinite_anyrad_plats_practice = i != 0; },
-                                RefreshSetting = (s, _) => s.optionList.SetOptionTo(settings.infinite_anyrad_plats_practice ? 1 : 0),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            },
-                            out var MainOptions);
-                        c.AddKeybind(
-                            "ReloadBossBind",
-                            settings.keybinds.Key_Reload_Boss,
-                            new KeybindConfig
-                            {
-                                Label = "Reload Boss",
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
-                            }
-                        ).AddKeybind(
-                            "ReturnToHoGBind",
-                            settings.keybinds.Key_return_to_hog,
-                            new KeybindConfig
-                            {
-                                Label = "Return To HoG",
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
-                            }
-                        ).AddMenuButton(
-                            "ExtraSettings",
-                            new MenuButtonConfig
-                            {
-                                Label = "Additional Settings",
-                                SubmitAction = _ => UIManager.instance.UIGoToDynamicMenu(ExtraSettings),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = MenuButtonStyle.VanillaStyle,
-                                Proceed = true,
-                            }
-                        );
-                    }
-                )
-                .AddControls(
-                    new SingleContentLayout(new AnchoredPosition(
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0f, -64f)
-                    )),
-                    c => c.AddMenuButton(
-                        "BackButton",
-                        new MenuButtonConfig
-                        {
-                            Label = "Back",
-                            CancelAction = _ =>
-                            {
-                                switch (isEnabled)
-                                {
-                                    case true when !isCurrentlyEnabled:
-                                        Initialize();
-                                        break;
-                                    case false when isCurrentlyEnabled:
-                                        Unload();
-                                        break;
-                                }
-                                UIManager.instance.UIGoToDynamicMenu(modListMenu);
-                            },
-                            SubmitAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                            Style = MenuButtonStyle.VanillaStyle,
-                            Proceed = true
-                        }
-                    )
-                )
-                .Build();
+                }
+            );
 
+            menuRef ??= new Menu(
+                "Easier Pantheon Practice Settings",
+                new Element[] {
+                    new HorizontalOption(
+                        name: "Toggle Mod",
+                        description: "",
+                        values: new []{"On","Off"},
+                        applySetting: val => isEnabled = val == 0,
+                        loadSetting: () => settings.remove_health
+                    ),
+                    new HorizontalOption(
+                        name: "Remove Health",
+                        description: "",
+                        values: maskvalues,
+                        applySetting: val => settings.remove_health = val,
+                        loadSetting: () => settings.remove_health
+                    ),
+                    new HorizontalOption(
+                        name: "Lifeblood",
+                        description: "",
+                        values: maskvalues,
+                        applySetting: val => settings.lifeblood = val,
+                        loadSetting: () => settings.lifeblood
+                    ),
+                    new HorizontalOption(
+                        name: "Soul",
+                        description: "",
+                        values: soulvalues,
+                        applySetting: val => settings.soul = Int32.Parse(soulvalues[val]),
+                        loadSetting: () => settings.soul
+                    ),
+                    new HorizontalOption(
+                        name: "Hitless Practice",
+                        description: "",
+                        values: new[]{"False", "True"},
+                        applySetting: val => settings.hitless_practice = val == 1,
+                        loadSetting: () => settings.hitless_practice ? 1 : 0
+                    ),
+                    new HorizontalOption(
+                        name: "Reload Boss On Death",
+                        description: "",
+                        values: new[]{"False", "True"},
+                        applySetting: val => {
+                            Modding.Logger.Log("HERE");
+                            Modding.Logger.Log(val);
+                            Modding.Logger.Log(val != 0);
+                            settings.reload_boss_on_death = val == 1;
+                        },
+                        loadSetting: () => settings.reload_boss_on_death ? 1 : 0
+                    ),
+                    new HorizontalOption(
+                        name: "Infinite AnyRad Plats Practice",
+                        description: "",
+                        values: new[]{"False", "True"},
+                        applySetting: val => settings.infinite_anyrad_plats_practice = val == 1,
+                        loadSetting: () => settings.infinite_anyrad_plats_practice ? 1 : 0
+                    ),
+                    new KeyBind(
+                        name: "Reload Boss",
+                        playerAction: settings.keybinds.Key_Reload_Boss
+                    ),
+                    new KeyBind(
+                        name: "Return To HoG",
+                        playerAction: settings.keybinds.Key_return_to_hog
+                    ),
+                    Blueprints.NavigateToMenu(
+                        name: "Additional Settings",
+                        description: "",
+                        getScreen: () => ExtraSettings.GetMenuScreen(menuRef.menuScreen)
+                    ),
+                }
+            );
 
-
-            ExtraSettings = new MenuBuilder("Additional Settings")
-                .CreateTitle("Additional Settings", MenuTitleStyle.vanillaStyle)
-                .CreateContentPane(RectTransformData.FromSizeAndPos(
-                    new RelVector2(new Vector2(1920f, 903f)),
-                    new AnchoredPosition(
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0f, -60f)
-                    )
-                ))
-                .CreateControlPane(RectTransformData.FromSizeAndPos(
-                    new RelVector2(new Vector2(1920f, 259f)),
-                    new AnchoredPosition(
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0f, -502f)
-                    )
-                ))
-                .SetDefaultNavGraph(new ChainedNavGraph())
-                .AddContent(
-                    RegularGridLayout.CreateVerticalLayout(105f),
-                    c =>
-                    {
-                        c.AddHorizontalOption(
-                            "funny_descriptions",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Funny Descriptions",
-                                Options = new [] {"True", "False"},
-                                ApplySetting = (_, i) => { settings.funny_descriptions = i == 0; },
-                                RefreshSetting =
-                                    (s, _) => s.optionList.SetOptionTo(settings.funny_descriptions ? 0 : 1),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "only_apply_settings",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Only Apply Settings",
-                                Options = boolvalues,
-                                ApplySetting = (_, i) => { settings.only_apply_settings = i != 0; },
-                                RefreshSetting = (s, _) =>
-                                    s.optionList.SetOptionTo(settings.only_apply_settings ? 1 : 0),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddHorizontalOption(
-                            "allow_reloads_in_loads",
-                            new HorizontalOptionConfig
-                            {
-                                Label = "Can Reloads Boss in Loads",
-                                Options = boolvalues,
-                                ApplySetting = (_, i) => { settings.allow_reloads_in_loads = i != 0; },
-                                RefreshSetting = (s, _) =>
-                                    s.optionList.SetOptionTo(settings.allow_reloads_in_loads ? 1 : 0),
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu),
-                                Style = HorizontalOptionStyle.VanillaStyle
-                            }).AddKeybind(
-                            "TeleportAroundHoGBind",
-                            settings.keybinds.Key_teleport_around_HoG,
-                            new KeybindConfig
-                            {
-                                Label = "Move Around HoG",
-                                CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(modListMenu)
-                            }, out var MainOptions);
-                    }
-                )
-                .AddControls(
-                    new SingleContentLayout(new AnchoredPosition(
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0.5f, 0.5f),
-                        new Vector2(0f, -64f)
-                    )),
-                    c => c.AddMenuButton(
-                        "BackButton",
-                        new MenuButtonConfig
-                        {
-                            Label = "Back",
-                            CancelAction = _ => UIManager.instance.UIGoToDynamicMenu(MainMenu),
-                            SubmitAction = _ => UIManager.instance.UIGoToDynamicMenu(MainMenu),
-                            Style = MenuButtonStyle.VanillaStyle,
-                            Proceed = true
-                        }
-                    )
-                )
-                .Build();
-
-
-            return MainMenu;
+            return menuRef.GetMenuScreen(modListMenu);
         }
 
         public static GlobalSettings settings { get; set; } = new GlobalSettings();
@@ -295,8 +150,6 @@ namespace Easier_Pantheon_Practice
         public override void Initialize()
         {
             Instance = this;
-
-            isCurrentlyEnabled = true;
             
             Log("Trying to load mod");
 
@@ -362,7 +215,6 @@ namespace Easier_Pantheon_Practice
 
         public void Unload()
         {
-            isCurrentlyEnabled = false;
             ModHooks.LanguageGetHook -= BossDesc;
             ModHooks.SavegameLoadHook -= Load_Save;
             ModHooks.NewGameHook -= Load_Mod;

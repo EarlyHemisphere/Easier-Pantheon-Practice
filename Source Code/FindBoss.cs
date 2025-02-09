@@ -494,7 +494,7 @@ namespace Easier_Pantheon_Practice
             
             if(GameManager.instance.gameState == GameState.PAUSED) 
             {
-                yield return UIManager.instance.GoToDynamicMenu(EasierPantheonPractice.MainMenu);
+                yield return UIManager.instance.GoToDynamicMenu(EasierPantheonPractice.menuRef.menuScreen);
             }
         }
 
