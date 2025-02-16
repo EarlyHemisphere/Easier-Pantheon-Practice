@@ -118,6 +118,7 @@ namespace Easier_Pantheon_Practice
         {
             ModHooks.BeforeSceneLoadHook += BeforeSceneChange;
             USceneManager.sceneLoaded += SceneManager_sceneLoaded;
+            USceneManager.activeSceneChanged += ActiveSceneChanged;
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
             ModHooks.HeroUpdateHook += HeroUpdateFunction;
             ModHooks.AfterTakeDamageHook += Only1Damage;
@@ -584,6 +585,12 @@ namespace Easier_Pantheon_Practice
             }
 
             return sceneName;
+        }
+
+        public void ActiveSceneChanged(Scene _, Scene to) {
+            if (to.name == "Quit_To_Menu") {
+                postResetInvuln = false;
+            }
         }
 
         private void DoDreamReturn(On.BossSceneController.orig_DoDreamReturn orig, BossSceneController self)
