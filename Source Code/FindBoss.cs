@@ -28,6 +28,7 @@ namespace Easier_Pantheon_Practice
         private static Vector3 OldPosition, PosToMove;
         public static int? swordBurstRepeats = null;
         private static bool postResetInvuln = false;
+        private static bool loadingBoss = false;
 
         private static readonly Dictionary<int, List<float>> MoveAround = new Dictionary<int, List<float>>
         {
@@ -546,6 +547,7 @@ namespace Easier_Pantheon_Practice
             HeroController.instance.AddMPCharge(1);
             HeroController.instance.AddMPCharge(-1);
             BossSceneController.Instance.BossLevel = bossLevel;
+            loadingBoss = false;
         }
 
         private static IEnumerator LoadWorkshop()
@@ -571,7 +573,10 @@ namespace Easier_Pantheon_Practice
         {
             loop = true;
 
-            LoadBossScene();
+            if (!loadingBoss) {
+                loadingBoss = true;
+                LoadBossScene();
+            }
         }
         #region Misc Functions
 
@@ -590,6 +595,7 @@ namespace Easier_Pantheon_Practice
         public void ActiveSceneChanged(Scene _, Scene to) {
             if (to.name == "Quit_To_Menu") {
                 postResetInvuln = false;
+                loadingBoss = false;
             }
         }
 
