@@ -265,7 +265,8 @@ namespace Easier_Pantheon_Practice
             if (!DoesDictContain(GameManager.instance.GetSceneNameString())) return damage;
 
             if (EasierPantheonPractice.settings.hitless_practice) damage = 1000;
-            bool isPlayerDead = damage >= PlayerData.instance.GetInt("health");
+            int damageWithOC = PlayerData.instance.GetBool("overcharmed") ? damage * 2 : damage;
+            bool isPlayerDead = damageWithOC >= PlayerData.instance.GetInt("health");
 
             if (EasierPantheonPractice.settings.infinite_anyrad_plats_practice
                 && isPlayerDead
