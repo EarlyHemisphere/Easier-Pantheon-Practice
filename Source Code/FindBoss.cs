@@ -465,13 +465,7 @@ namespace Easier_Pantheon_Practice
             var settings = EasierPantheonPractice.settings;
             var HC = HeroController.instance;
 
-
             string theCurrentScene = GameManager.instance.GetSceneNameString();
-
-            if (Input.GetKeyDown("m"))
-            {
-                GameManager.instance.StartCoroutine(OpenModMenu());
-            }
             
             if (settings.keybinds.Key_return_to_hog.WasPressed)
             {
