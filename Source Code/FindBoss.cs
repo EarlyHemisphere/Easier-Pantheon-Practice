@@ -529,6 +529,7 @@ namespace Easier_Pantheon_Practice
             GM.ResetSemiPersistentItems();
             HC.enterWithoutInput = true;
             HC.AcceptInput();
+            GM.AudioManager.ApplyMusicCue(GM.noMusicCue, 0f, 0f, false);
             GM.BeginSceneTransition(new GameManager.SceneLoadInfo
             {
                 SceneName = SceneToLoad,
