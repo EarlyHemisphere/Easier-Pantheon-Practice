@@ -58,7 +58,7 @@ namespace Easier_Pantheon_Practice
             {"Grey Prince", 1400},
             {"False Knight Dream", 360},
             {"Nightmare Grimm Boss", 1250},
-            {"HK Prime", 1600},
+            // {"HK Prime", 1600},
             {"Absolute Radiance", 3000},
         };
 
@@ -112,9 +112,9 @@ namespace Easier_Pantheon_Practice
                 case "Jar Collector":
                     Collector();
                     break;
-                case "HK Prime":
-                    PV();
-                    break;
+                // case "HK Prime":
+                //     PV();
+                //     break;
                 case "Oro":
                     NailMasters();
                     break;
@@ -136,14 +136,14 @@ namespace Easier_Pantheon_Practice
             }
         }
 
-        private void PV()
-        {
-            _control = gameObject.LocateMyFSM("Control");
-            _control.Fsm.GetFsmInt("Half HP").Value = health.hp * 2 / 3; 
-            //WHY IS THIS NAMED HALF HP???
-            _control.Fsm.GetFsmInt("Quarter HP").Value = health.hp * 1 / 3; 
-            //WHY IS THIS NAMED QUATER HP???
-        }
+        // private void PV()
+        // {
+        //     _control = gameObject.LocateMyFSM("Control");
+        //     _control.Fsm.GetFsmInt("Half HP").Value = health.hp * 2 / 3; 
+        //     //WHY IS THIS NAMED HALF HP???
+        //     _control.Fsm.GetFsmInt("Quarter HP").Value = health.hp * 1 / 3; 
+        //     //WHY IS THIS NAMED QUATER HP???
+        // }
 
         private void Collector()
         {

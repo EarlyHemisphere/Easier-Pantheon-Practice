@@ -13,6 +13,7 @@ using SFCore.Utils;
 using System.Reflection;
 using System.Linq;
 using static UnityEngine.ParticleSystem;
+using System.Runtime.Serialization;
 
 
 namespace Easier_Pantheon_Practice
@@ -27,6 +28,7 @@ namespace Easier_Pantheon_Practice
         public static string CurrentBoss, CurrentBoss_1;
         private static Vector3 OldPosition, PosToMove;
         public static int? swordBurstRepeats = null;
+        private static int reloadBossLevel = -1;
         private static bool postResetInvuln = false;
         private static bool loadingBoss = false;
 
@@ -123,6 +125,7 @@ namespace Easier_Pantheon_Practice
             On.BossSceneController.DoDreamReturn += DoDreamReturn;
             ModHooks.HeroUpdateHook += HeroUpdateFunction;
             ModHooks.AfterTakeDamageHook += Only1Damage;
+            On.HealthManager.Start += FixPureVesselHP;
         }
 
 
@@ -515,6 +518,8 @@ namespace Easier_Pantheon_Practice
             var HC = HeroController.instance;
             var GM = GameManager.instance;
 
+            reloadBossLevel = BossSceneController.Instance.BossLevel;
+
             //Copy paste of the FSM that loads a boss from HoG
             PlayerData.instance.dreamReturnScene = "GG_Workshop";
             PlayMakerFSM.BroadcastEvent("BOX DOWN DREAM");
@@ -538,7 +543,7 @@ namespace Easier_Pantheon_Practice
                 Visualization = GameManager.SceneLoadVisualizations.GodsAndGlory,
                 PreventCameraFadeOut = true
             });
-            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul(BossSceneController.Instance.BossLevel));
+            GameManager.instance.gameObject.GetComponent<FindBoss>().StartCoroutine(FixSoul(reloadBossLevel));
         }
 
         private static IEnumerator FixSoul(int bossLevel)
@@ -619,6 +624,16 @@ namespace Easier_Pantheon_Practice
             yield return null;
         }
 
+        private void FixPureVesselHP(On.HealthManager.orig_Start orig, HealthManager self)
+        {
+            orig (self);
+
+            if (loop && reloadBossLevel == 2 && self.gameObject.name == "HK Prime")
+            {
+                self.hp = 1850;
+            }
+        }
+
 
         #endregion
 
@@ -629,6 +644,7 @@ namespace Easier_Pantheon_Practice
             On.BossSceneController.DoDreamReturn -= DoDreamReturn;
             ModHooks.AfterTakeDamageHook -= Only1Damage;
             ModHooks.HeroUpdateHook -= HeroUpdateFunction;
+            On.HealthManager.Start -= FixPureVesselHP;
         }
     }
 }
